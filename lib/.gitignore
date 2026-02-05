@@ -1,0 +1,4 @@
+# Native libraries (build artifacts - not committed)
+*.so
+*.dylib
+*.dll

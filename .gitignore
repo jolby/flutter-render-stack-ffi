@@ -1,0 +1,21 @@
+# lisp junk
+*.FASL
+*.fasl
+*.lisp-temp
+
+# emacs junk
+\#*
+*~
+.\#*
+
+# system dependent junk 
+local/
+
+# Built libraries (platform-specific, not tracked)
+lib/*.so
+lib/*.dylib
+lib/*.dll
+
+# Agentic metadata (symlinked from render-stack-meta)
+AGENTS.md
+.beads/
