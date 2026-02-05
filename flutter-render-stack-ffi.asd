@@ -14,8 +14,8 @@
   :version "0.2.0"
   :author "Joel Boehland"
   :license "BSD-3-Clause"
-  :depends-on (:flutter-render-stack-impeller-bindings
-               :flutter-render-stack-flow-bindings))
+  :depends-on (:flutter-render-stack-ffi-impeller-bindings
+               :flutter-render-stack-ffi-flow-bindings))
 
 
 ;;;-----------------------------------------------------------------------------
