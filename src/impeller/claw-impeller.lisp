@@ -12,7 +12,7 @@
                             ((:and :aarch64 :android) "aarch64-linux-android"))
                   (:persistent t
                    :depends-on (:claw-utils)
-                   :asd-path #.(merge-pathnames "flutter-render-stack-impeller-bindings.asd" (asdf:component-pathname (asdf:find-system '#:flutter-render-stack-ffi)))
+                   :asd-path #.(merge-pathnames "flutter-render-stack-ffi-impeller-bindings.asd" (asdf:component-pathname (asdf:find-system '#:flutter-render-stack-ffi)))
                    :bindings-path #.(merge-pathnames "impeller-bindings/" (asdf:component-pathname (asdf:find-system '#:flutter-render-stack-ffi)))))
   :in-package :%impeller
   :trim-enum-prefix t
