@@ -13,7 +13,7 @@
                   (:persistent t
                    :depends-on (:claw-utils)
                    :asd-path #.(merge-pathnames "flutter-render-stack-impeller-bindings.asd" (asdf:component-pathname (asdf:find-system '#:flutter-render-stack-ffi)))
-                   :bindings-path #.(merge-pathnames "src/impeller/bindings/" (asdf:component-pathname (asdf:find-system '#:flutter-render-stack-ffi)))))
+                   :bindings-path #.(merge-pathnames "impeller-bindings/" (asdf:component-pathname (asdf:find-system '#:flutter-render-stack-ffi)))))
   :in-package :%impeller
   :trim-enum-prefix t
   :recognize-bitfields t

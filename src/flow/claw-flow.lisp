@@ -13,7 +13,7 @@
                   (:persistent t
                    :depends-on (:claw-utils)
                    :asd-path #.(merge-pathnames "flutter-render-stack-flow-bindings.asd" (asdf:component-pathname (asdf:find-system '#:flutter-render-stack-ffi)))
-                   :bindings-path #.(merge-pathnames "src/flow/bindings/" (asdf:component-pathname (asdf:find-system '#:flutter-render-stack-ffi)))))
+                   :bindings-path #.(merge-pathnames "flow-bindings/" (asdf:component-pathname (asdf:find-system '#:flutter-render-stack-ffi)))))
   :in-package :%flow
   :trim-enum-prefix t
   :recognize-bitfields t
