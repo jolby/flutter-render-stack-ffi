@@ -74,7 +74,7 @@
 ;; Delete the generated adapters and run:
 ;;
 ;; (pushnew :claw-regen-adapter *features*)
-;; (cffi:load-foreign-library #P"/home/jboehland/.local/lib/libresect.so")
+;; (cffi:load-foreign-library (merge-pathnames ".local/lib/libresect.so" (user-homedir-pathname)))
 ;; (ql:quickload :flutter-render-stack-ffi/gen-impeller :force t)
 ;; (ql:quickload :flutter-render-stack-ffi/gen-flow :force t)
 ;; (claw:load-wrapper :flutter-render-stack-ffi/impeller)
