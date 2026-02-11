@@ -190,6 +190,16 @@ FLOW_DEFINE_HANDLE(FlowFrameDamage);
 FLOW_DEFINE_HANDLE(FlowRasterCache);
 
 //------------------------------------------------------------------------------
+// Forward declarations for Impeller C API handle types.
+// These match IMPELLER_DEFINE_HANDLE expansion exactly so that flow.h can be
+// included without requiring impeller.h.
+//------------------------------------------------------------------------------
+#ifndef IMPELLER_DEFINE_HANDLE
+typedef struct ImpellerContext_* ImpellerContext;
+typedef struct ImpellerDisplayList_* ImpellerDisplayList;
+#endif
+
+//------------------------------------------------------------------------------
 // Structures
 //------------------------------------------------------------------------------
 
@@ -740,6 +750,98 @@ void FlowCompositorContextRelease(FlowCompositorContext FLOW_NULLABLE context);
 ///
 FLOW_EXPORT FLOW_NODISCARD FlowRasterCache FLOW_NULLABLE
 FlowCompositorContextGetRasterCache(FlowCompositorContext FLOW_NONNULL context);
+
+//------------------------------------------------------------------------------
+// ScopedFrame API
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+/// @brief      Acquire a scoped frame for rasterization from the compositor
+///             context.
+///
+///             The frame creates an internal DisplayListBuilder as its canvas.
+///             After rasterization, call FlowScopedFrameBuildDisplayListNew
+///             to extract the recorded DisplayList for rendering to a surface.
+///
+/// @param[in]  context           The compositor context.
+/// @param[in]  impeller_context  The Impeller context (provides rendering
+///                               backend). May be NULL for CPU-only raster
+///                               cache (limited functionality).
+/// @param[in]  frame_size        The frame dimensions in physical pixels.
+///
+/// @return     A scoped frame handle, or NULL on failure.
+///
+/// @see        FlowScopedFrameRaster
+/// @see        FlowScopedFrameBuildDisplayListNew
+///
+FLOW_EXPORT FLOW_NODISCARD FlowScopedFrame FLOW_NULLABLE
+FlowCompositorContextAcquireFrame(FlowCompositorContext FLOW_NONNULL context,
+                                  ImpellerContext FLOW_NULLABLE
+                                      impeller_context,
+                                  const FlowISize* FLOW_NONNULL frame_size);
+
+//------------------------------------------------------------------------------
+/// @brief      Rasterize a layer tree to the scoped frame.
+///
+///             Runs the full Flutter rasterization pipeline:
+///             1. Preroll pass (compute bounds, prepare raster cache)
+///             2. Paint pass (recursive layer painting to internal canvas)
+///
+///             After a successful raster, call
+///             FlowScopedFrameBuildDisplayListNew to extract the recorded
+///             DisplayList.
+///
+/// @param[in]  frame              The scoped frame.
+/// @param[in]  layer_tree         The layer tree to rasterize.
+/// @param[in]  frame_damage       Optional damage tracker for partial repaint.
+///                                Pass NULL for full repaint.
+/// @param[in]  ignore_raster_cache  If true, bypass the raster cache.
+///
+/// @return     FlowRasterStatus_Success on success.
+///
+FLOW_EXPORT
+FlowRasterStatus FlowScopedFrameRaster(FlowScopedFrame FLOW_NONNULL frame,
+                                       FlowLayerTree FLOW_NONNULL layer_tree,
+                                       FlowFrameDamage FLOW_NULLABLE
+                                           frame_damage,
+                                       bool ignore_raster_cache);
+
+//------------------------------------------------------------------------------
+/// @brief      Build the immutable DisplayList from the frame's recorded
+///             drawing commands.
+///
+///             Must be called after a successful FlowScopedFrameRaster().
+///             Returns a new ImpellerDisplayList handle owned by the caller.
+///             The caller should render it to a surface using
+///             ImpellerSurfaceDrawDisplayList() and then release it.
+///
+///             Can only be called once per frame — subsequent calls return
+///             NULL.
+///
+/// @param[in]  frame  The scoped frame (must have been rasterized).
+///
+/// @return     A new ImpellerDisplayList handle, or NULL on failure.
+///             Caller owns the returned handle and must release it with
+///             ImpellerDisplayListRelease().
+///
+FLOW_EXPORT FLOW_NODISCARD ImpellerDisplayList FLOW_NULLABLE
+FlowScopedFrameBuildDisplayListNew(FlowScopedFrame FLOW_NONNULL frame);
+
+//------------------------------------------------------------------------------
+/// @brief      Retain a reference to a scoped frame.
+///
+/// @param[in]  frame  The scoped frame.
+///
+FLOW_EXPORT
+void FlowScopedFrameRetain(FlowScopedFrame FLOW_NULLABLE frame);
+
+//------------------------------------------------------------------------------
+/// @brief      Release a reference to a scoped frame.
+///
+/// @param[in]  frame  The scoped frame.
+///
+FLOW_EXPORT
+void FlowScopedFrameRelease(FlowScopedFrame FLOW_NULLABLE frame);
 
 //------------------------------------------------------------------------------
 // RasterCache API
